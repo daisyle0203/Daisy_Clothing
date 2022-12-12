@@ -4,8 +4,9 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword, 
-  signOut
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
 } from "firebase/auth"
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore"
 
@@ -27,12 +28,16 @@ provider.setCustomParameters({
   prompt: "select_account",
 })
 
-export const auth = getAuth()
+export const auth = getAuth() // this object keeps track of whether or not the user has signed in or signed out
+
 export const signInWithGooglePopup = () => signInWithPopup(auth, provider)
 
 export const db = getFirestore()
 
-export const createUserDocumentFromAuth = async (userAuth, additionalInfo = {}) => {
+export const createUserDocumentFromAuth = async (
+  userAuth,
+  additionalInfo = {}
+) => {
   if (!userAuth) return
   const userDocRef = doc(db, "users", userAuth.uid)
 
@@ -50,12 +55,13 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInfo = {}) 
 
     // if user data exists
     // create/ set the document with the data from userAuth in my collection
+    // return userDocRef
     try {
       await setDoc(userDocRef, {
         displayName,
         email,
         createdAt,
-        ...additionalInfo
+        ...additionalInfo,
       })
     } catch (error) {
       console.log("error creating the user", error.message)
@@ -77,4 +83,9 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   return await signInWithEmailAndPassword(auth, email, password)
 }
 
-export const signOutUser = () => signOut(auth)
+export const signOutUser = async () => await signOut(auth)
+
+// whenever this function is instantiated, you need to give it a call back
+// because the callback is what you are going to give onAuthStateChanged
+export const onAuthStateChangedListener = (callback) =>
+  onAuthStateChanged(auth, callback)
