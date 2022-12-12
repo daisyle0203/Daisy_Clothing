@@ -4,14 +4,16 @@ import { Outlet, Link } from "react-router-dom"
 import CardIcon from "../../components/cart-icon/cart-icon.component"
 import CartDropdown from "../../components/cart-dropdown/cart-dropdown.component"
 
-import { ReactComponent as DaisyLogo } from "../../assets/daisy.svg"
 import { UserContext } from "../../contexts/user.context"
+import { CartContext } from "../../contexts/cart.context"
 
-import "./navigation.styles.scss"
+import { ReactComponent as DaisyLogo } from "../../assets/daisy.svg"
 import { signOutUser } from "../../utils/firebase/firebase.utils"
 
+import "./navigation.styles.scss"
 const Navigation = () => {
   const { currentUser } = useContext(UserContext)
+  const { isCartOpen } = useContext(CartContext)
 
   return (
     <Fragment>
@@ -35,7 +37,7 @@ const Navigation = () => {
           )}
           <CardIcon />
         </div>
-        <CartDropdown />
+        {isCartOpen && <CartDropdown />}
       </div>
       <Outlet />
     </Fragment>
