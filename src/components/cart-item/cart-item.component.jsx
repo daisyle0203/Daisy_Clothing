@@ -1,5 +1,6 @@
-const CartItem = ({ CartItem }) => {
-  const { name, quantity } = CartItem
+const CartItem = ({ cartItem }) => {
+  const { name, quantity } = cartItem
+  
   return (
     <div>
       <h2>{name}</h2>
