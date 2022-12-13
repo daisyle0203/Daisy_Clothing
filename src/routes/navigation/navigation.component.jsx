@@ -1,7 +1,7 @@
 import { Fragment, useContext } from "react"
-import { Outlet, Link } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 
-import CardIcon from "../../components/cart-icon/cart-icon.component"
+import CartIcon from "../../components/cart-icon/cart-icon.component"
 import CartDropdown from "../../components/cart-dropdown/cart-dropdown.component"
 
 import { UserContext } from "../../contexts/user.context"
@@ -10,35 +10,37 @@ import { CartContext } from "../../contexts/cart.context"
 import { ReactComponent as DaisyLogo } from "../../assets/daisy.svg"
 import { signOutUser } from "../../utils/firebase/firebase.utils"
 
-import "./navigation.styles.scss"
+import {
+  NavigationContainer,
+  LogoContainer,
+  NavLinks,
+  NavLink,
+} from "./navigation.styles"
+
 const Navigation = () => {
   const { currentUser } = useContext(UserContext)
   const { isCartOpen } = useContext(CartContext)
 
   return (
     <Fragment>
-      <div className="navigation">
-        <Link className="logo-container" to="/">
-          <DaisyLogo className="logo" />
-        </Link>
-        <div className="nav-links-container">
-          <Link className="nav-link" to="/shop">
-            SHOP
-          </Link>
+      <NavigationContainer>
+        <LogoContainer to="/">
+          <DaisyLogo />
+        </LogoContainer>
+        <NavLinks>
+          <NavLink to="/shop">SHOP</NavLink>
+
           {currentUser ? (
-            <span className="nav-link" onClick={signOutUser}>
-              {" "}
-              SIGN OUT{" "}
-            </span>
+            <NavLink as="span" onClick={signOutUser}>
+              SIGN OUT
+            </NavLink>
           ) : (
-            <Link className="nav-link" to="/auth">
-              SIGN IN
-            </Link>
+            <NavLink to="/auth">SIGN IN</NavLink>
           )}
-          <CardIcon />
-        </div>
+          <CartIcon />
+        </NavLinks>
         {isCartOpen && <CartDropdown />}
-      </div>
+      </NavigationContainer>
       <Outlet />
     </Fragment>
   )
