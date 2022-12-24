@@ -1,5 +1,5 @@
 // Anything that has to do with user value is here
-import { createContext, useState, useEffect } from "react"
+import { createContext,useEffect, useReducer } from "react"
 
 import {
   onAuthStateChangedListener,
@@ -13,16 +13,46 @@ export const UserContext = createContext({
   setCurrentUser: () => null,
 })
 
+export const USER_ACTION_TYPES = {
+  SET_CURRENT_USER: "SET_CURRENT_USER",
+}
+
+const INITIAL_STATE = {
+  currentUser: null,
+}
+
+// Use reducer to store current user
+const userReducer = (state, action) => {
+  console.log("dispatched");
+  console.log(action);
+  const { type, payload } = action
+
+  switch (type) {
+    case USER_ACTION_TYPES.SET_CURRENT_USER:
+      return { ...state, currentUser: payload }
+    default:
+      throw new Error(`Unhandled type ${type} in userReducer`)
+  }
+}
+
 // UserProvider stores a user object -> stores a user state
 export const UserProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null)
+  // const [currentUser, setCurrentUser] = useState(null)
+  
+  // const { currentUser } = state
+  const [{ currentUser }, dispatch] = useReducer(userReducer, INITIAL_STATE);
+  console.log(currentUser);
+
+  const setCurrentUser = (user) =>
+  dispatch({ type: USER_ACTION_TYPES.SET_CURRENT_USER, payload: user });
+  
   const value = { currentUser, setCurrentUser }
 
   // only run this function once when the component mounts
   // the moment you initialize the listener, you will run this callback once
   useEffect(() => {
     const unsubscribe = onAuthStateChangedListener((user) => {
-    // if a user comes through then create a user document from auth
+      // if a user comes through then create a user document from auth
       if (user) {
         createUserDocumentFromAuth(user)
       }
