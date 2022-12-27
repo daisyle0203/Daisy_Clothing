@@ -1,6 +1,8 @@
 // Anything that has to do with user value is here
 import { createContext,useEffect, useReducer } from "react"
 
+import { createAction } from "../utils/reducer/reducer.utils"
+
 import {
   onAuthStateChangedListener,
   createUserDocumentFromAuth,
@@ -23,8 +25,6 @@ const INITIAL_STATE = {
 
 // Use reducer to store current user
 const userReducer = (state, action) => {
-  console.log("dispatched");
-  console.log(action);
   const { type, payload } = action
 
   switch (type) {
@@ -41,10 +41,9 @@ export const UserProvider = ({ children }) => {
   
   // const { currentUser } = state
   const [{ currentUser }, dispatch] = useReducer(userReducer, INITIAL_STATE);
-  console.log(currentUser);
 
   const setCurrentUser = (user) =>
-  dispatch({ type: USER_ACTION_TYPES.SET_CURRENT_USER, payload: user });
+  dispatch(createAction(USER_ACTION_TYPES.SET_CURRENT_USER, user));
   
   const value = { currentUser, setCurrentUser }
 
